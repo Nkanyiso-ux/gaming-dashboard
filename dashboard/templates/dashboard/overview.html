@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Overview</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body { font-family: Arial; background:#f4f7fb; padding:20px; }
+.cards { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.card { background:white; padding:20px; border-radius:10px; }
+.green { color:green; }
+.red { color:red; }
+</style>
+</head>
+
+<body>
+
+<h1>📊 Overview Dashboard</h1>
+
+<!-- CARDS -->
+<div class="cards">
+    <div class="card">Sessions: {{ total_sessions }}</div>
+    <div class="card">Profit: 
+        <span class="{% if total_profit > 0 %}green{% else %}red{% endif %}">
+            {{ total_profit }}
+        </span>
+    </div>
+    <div class="card">Win Rate: {{ win_rate }}%</div>
+    <div class="card">Biggest Win: {{ biggest_win }}</div>
+</div>
+
+<!-- CHART -->
+<h2>Profit Trend</h2>
+<canvas id="chart"></canvas>
+
+<script>
+new Chart(document.getElementById('chart'), {
+    type: 'line',
+    data: {
+        labels: {{ dates|safe }},
+        datasets: [{
+            label: 'Profit',
+            data: {{ profits|safe }}
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

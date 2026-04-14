@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro Gaming Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    background: #13c196;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    background: #1e293b;
+    color: white;
+    height: 200vh;
+    padding: 1px;
+}
+
+.sidebar h2 {
+    text-align: left;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    margin: 10px 0;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.sidebar a:hover {
+    background: #334155;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 5px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.green { color: green; }
+.red { color: red; }
+
+/* CHARTS */
+.charts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.chart-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    margin-top: 20px;
+    background: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 50px
+    border-bottom: 1px solid #6f21af;
+}
+
+/* FILTER */
+.filter {
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>🎮 Dashboard</h2>
+    <a href="{% url 'overview' %}">📊 Overview</a>
+    <a href="{% url 'dashboard' %}">📋 Sessions</a>
+    <!--a href="#">Analytics</a-->
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="header">
+    <h1>Gaming Analytics</h1>
+    <button onclick="openModal()">➕ Add</button>
+</div>
+c
+<!-- FILTER -->
+ <form method="GET" class="filter">
+    <input type="date" name="start">
+    <input type="date" name="end">
+    <button type="submit">Filter</button>
+</form>
+
+<!-- CARDS -->
+<div class="cards">
+    <div class="card">Sessions: {{ total_sessions }}</div>
+    <div class="card">Profit: <span class="{% if total_profit > 0 %}green{% else %}red{% endif %}">{{ total_profit }}</span></div>
+    <div class="card">Win Rate: {{ win_rate }}%</div>
+    <div class="card">Biggest Win: {{ biggest_win }}</div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts">
+
+    <div class="chart-box">
+        <h3>Profit Trend</h3>
+        <canvas id="lineChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Win vs Loss</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+</div>
+
+<!-- BAR CHART -->
+<div class="chart-box">
+    <h3>Spins per Session</h3>
+    <canvas id="barChart"></canvas>
+</div>
+
+<!-- TABLE -->
+<table>
+<tr>
+<th>Date</th>
+<th>Game</th>
+<th>Profit</th>
+</tr>
+
+{% for session in sessions %}
+<tr>
+<td>{{ session.date }}</td>
+<td>{{ session.game_name }}</td>
+<td class="{% if session.profit > 0 %}green{% else %}red{% endif %}">
+{{ session.profit }}
+</td>
+</tr>
+<td>
+<form method="POST" action="{% url 'delete_session' session.id %}" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('Delete this session?')" style="background:none; border:none; color:red;">
+        🗑️
+    </button>
+</form>
+    </a>
+</td>
+{% endfor %}
+</table>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" style="display:none; position:fixed; top:0; width:100%; height:100%; background:rgba(117, 133, 130, 0.84);">
+<div style="background:white; width:400px; margin:10% auto; padding:20px;">
+<form method="POST">
+{% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Save</button>
+</form>
+</div>
+</div>
+
+<script>
+// LINE CHART
+new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+        labels: {{ dates|safe }},
+        datasets: [{
+            label: 'Profit',
+            data: {{ profits|safe }}
+        }]
+    }
+});
+
+// PIE CHART
+let wins = {{ win_rate }};
+new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Wins', 'Losses'],
+        datasets: [{
+            data: [wins, 100 - wins]
+        }]
+    }
+});
+
+// BAR CHART
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ dates|safe }},
+        datasets: [{
+            label: 'Spins',
+            data: {{ profits|safe }}
+        }]
+    }
+});
+
+// MODAL
+function openModal(){
+    document.getElementById("modal").style.display = "block";
+}
+
+// FILTER (frontend only demo)
+function filterData(){
+    alert("Hook this to Django later 🔥");
+}
+</script>
+
+</body>
+</html>
