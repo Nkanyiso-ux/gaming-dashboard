@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Gaming Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,6 +16,7 @@ body {
     background: #f8fafc;
     color: #1e293b;
     display: flex;
+    min-height: 100vh;
 }
 
 /* SIDEBAR */
@@ -26,6 +26,7 @@ body {
     color: white;
     height: 100vh;
     padding: 20px;
+    flex-shrink: 0;
 }
 
 .sidebar h2 {
@@ -50,6 +51,7 @@ body {
 .main {
     flex: 1;
     padding: 30px;
+    box-sizing: border-box;
 }
 
 /* HEADER */
@@ -57,6 +59,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 /* BUTTON */
@@ -99,17 +102,23 @@ body {
     border-radius: 12px;
 }
 
+canvas {
+    max-width: 100%;
+}
+
 /* TABLE */
 .table-box {
     margin-top: 30px;
     background: white;
     padding: 20px;
     border-radius: 12px;
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 400px;
 }
 
 th {
@@ -129,158 +138,37 @@ td {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
 }
 
 .modal-content {
     background: white;
-    width: 400px;
+    width: 90%;
+    max-width: 400px;
     margin: 10% auto;
     padding: 20px;
     border-radius: 12px;
 }
+
+/* RESPONSIVE RULES */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .main {
+        padding: 15px;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
 </style>
 </head>
-
-<body>
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>🎮 Dashboard</h2>
-    <a href="{% url 'overview' %}">📊 Overview</a>
-    <a href="{% url 'dashboard' %}">📋 Sessions</a>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-    <!-- HEADER -->
-    <div class="header">
-        <h1>Gaming Analytics</h1>
-        <button class="btn" onclick="openModal()">➕ Add Session</button>
-    </div>
-
-    <!-- CARDS -->
-    <div class="cards">
-        <div class="card">
-            <h4>Total Sessions</h4>
-            <h2>{{ total_sessions }}</h2>
-        </div>
-
-        <div class="card">
-            <h4>Total Profit</h4>
-            <h2 class="{% if total_profit > 0 %}green{% else %}red{% endif %}">
-                {{ total_profit }}
-            </h2>
-        </div>
-
-        <div class="card">
-            <h4>Win Rate</h4>
-            <h2>{{ win_rate }}%</h2>
-        </div>
-
-        <div class="card">
-            <h4>Biggest Win</h4>
-            <h2>{{ biggest_win }}</h2>
-        </div>
-    </div>
-
-    <!-- CHART -->
-    <div class="chart-box">
-        <h3>📈 Profit Over Time</h3>
-        <canvas id="chart"></canvas>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-box">
-        <h3>📋 Sessions</h3>
-
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Game</th>
-                <th>Profit</th>
-            </tr>
-
-            {% for session in sessions %}
-            <tr>
-                <td>{{ session.date }}</td>
-                <td>{{ session.game_name }}</td>
-                <td class="{% if session.profit > 0 %}green{% else %}red{% endif %}">
-                    {{ session.profit }}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-
-</div>
-
-<!-- MODAL -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <h3>Add Session</h3>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn" type="submit">Save</button>
-        </form>
-    </div>
-</div>
-
-<!-- JS -->
-<script>
-// OPEN MODAL
-function openModal() {
-    document.getElementById("modal").style.display = "block";
-}
-
-// CLOSE MODAL
-window.onclick = function(e) {
-    if (e.target.id === "modal") {
-        document.getElementById("modal").style.display = "none";
-    }
-}
-
-// CHART (UPGRADED)
-const ctx = document.getElementById('chart').getContext('2d');
-
-const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-gradient.addColorStop(0, "rgba(79, 70, 229, 0.4)");
-gradient.addColorStop(1, "rgba(79, 70, 229, 0)");
-
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: {{ dates|safe }},
-        datasets: [{
-            label: 'Profit',
-            data: {{ profits|safe }},
-            borderColor: "#4f46e5",
-            backgroundColor: gradient,
-            borderWidth: 3,
-            tension: 0.4,
-            fill: true,
-            pointRadius: 4,
-            pointBackgroundColor: "#4f46e5"
-        }]
-    },
-    options: {
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            x: {
-                grid: { display: false }
-            },
-            y: {
-                grid: { color: "#e5e7eb" }
-            }
-        }
-    }
-});
-</script>
-
-</body>
-</html>
