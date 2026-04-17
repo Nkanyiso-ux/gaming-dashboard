@@ -169,12 +169,20 @@ td {
 
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>🎮 Dashboard</h2>
-    <a href="{% url 'overview' %}">📊 Overview</a>
-    <a href="{% url 'dashboard' %}" class="active">📋 Sessions</a>
+
+    <a href="{% url 'overview' %}" class="{% if request.path == '/' %}active{% endif %}">
+        📊 Overview
+    </a>
+
+    <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}active{% endif %}">
+        📋 Sessions
+    </a>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
 <div class="header">

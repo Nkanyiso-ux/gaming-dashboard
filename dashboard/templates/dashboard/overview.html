@@ -94,6 +94,39 @@ body {
     margin-top: 30px;
     border-radius: 12px;
 }
+/* MOBILE */
+@media(max-width:768px){
+
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .sidebar h2 {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    canvas {
+        height: 250px !important;
+    }
+}
+
 </style>
 </head>
 
