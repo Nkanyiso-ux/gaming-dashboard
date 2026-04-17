@@ -19,10 +19,12 @@ def dashboard_view(request):
     biggest_win = max([s.best_win for s in sessions], default=0)
 
     wins = sum(1 for s in sessions if (s.profit or 0) > 0)
+    losses = sum(1 for s in sessions if (s.profit or 0) <= 0)
     win_rate = (wins / total_sessions * 100) if total_sessions > 0 else 0
 
     dates = [s.date.strftime("%Y-%m-%d") for s in sessions]
     profits = [s.profit or 0 for s in sessions]
+    games = [s.game_name for s in sessions]
 
     if request.method == "POST":
         form = GamingSessionForm(request.POST)
@@ -38,11 +40,14 @@ def dashboard_view(request):
         'total_sessions': total_sessions,
         'total_profit': total_profit,
         'biggest_win': biggest_win,
-        'win_rate': round(win_rate, 2),
+        'win_rate': round(win_rate),
         'dates': dates,
         'profits': profits,
+        'games': games,
+        'losses': losses,
+        'wins': wins,
     })
-
+ 
 
 
 def delete_session(request, id):
