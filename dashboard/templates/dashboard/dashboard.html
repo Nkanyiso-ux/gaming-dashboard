@@ -67,6 +67,7 @@ body {
     padding: 10px 16px;
     border-radius: 8px;
     border: none;
+    cursor: pointer;
 }
 
 /* CARDS */
@@ -132,6 +133,23 @@ td {
     border-bottom: 1px solid #e2e8f0;
 }
 
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    width: 400px;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 12px;
+}
+
 /* MOBILE */
 @media(max-width:768px){
 
@@ -163,6 +181,16 @@ td {
     canvas {
         height: 250px !important;
     }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }
 </style>
 </head>
@@ -187,8 +215,10 @@ td {
 
 <div class="header">
     <h1>Gaming Analytics</h1>
+    <button class="btn" onclick="openModal()">➕ Add Session</button>
 </div>
 
+<!-- CARDS -->
 <div class="cards">
     <div class="card blue">
         <div class="card-top">Total Sessions</div>
@@ -254,7 +284,24 @@ td {
 
 </div>
 
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>
+            Add Session 
+            <span onclick="closeModal()" style="float:right;cursor:pointer;">❌</span>
+        </h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
 <script>
+// CHARTS
 const ctx = document.getElementById('chart').getContext('2d');
 const gradient = ctx.createLinearGradient(0,0,0,300);
 gradient.addColorStop(0,"rgba(79,70,229,0.4)");
@@ -295,6 +342,21 @@ backgroundColor:"#4f46e5"
 }]
 }
 });
+
+// MODAL
+function openModal() {
+    document.getElementById("modal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+window.onclick = function(e) {
+    if (e.target.id === "modal") {
+        closeModal();
+    }
+}
 </script>
 
 </body>
