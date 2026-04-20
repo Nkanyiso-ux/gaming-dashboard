@@ -3,7 +3,10 @@ from django.shortcuts import render, redirect
 from .models import GamingSession
 from .forms import GamingSessionForm
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def dashboard_view(request):
     sessions = GamingSession.objects.all().order_by('-date')
 
@@ -78,3 +81,22 @@ def overview(request):
         'dates': dates,
         'profits': profits,
     })
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request,user)
+            return redirect("dashboard")
+        else:
+            return render(request, "dashboard/login.html", {"error": "invalid credentials"})
+    return render(request, "dashboard/login.html")
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
