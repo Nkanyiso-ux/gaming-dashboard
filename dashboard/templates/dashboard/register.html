@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login</title>
+<title>Register</title>
 
 <style>
-body{
+body {
     font-family: Arial;
     background: #0f172a;
     display: flex;
@@ -13,47 +13,48 @@ body{
     height: 100vh;
 }
 
-.box{
+.box {
     background: white;
-    padding:30px;
+    padding: 30px;
     border-radius: 12px;
-    width: 300px;
-
+    width: 320px;
 }
 
-input{
+input {
     width: 100%;
-    padding:10px;
+    padding: 10px;
     margin: 10px 0;
 }
 
-button{
+button {
     width: 100%;
     padding: 10px;
-    background: #3b82f6;
+    background: #10b981;
     color: white;
     border: none;
     border-radius: 8px;
 }
+
+a {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+}
 </style>
-</head>   
+</head>
 
 <body>
 
 <div class="box">
-    <h2>Login</h2>
-
-    {% if error %}
-        <p style="color:red">{{ error }}</p>
-    {%endif%}
+    <h2>Create Account</h2>
 
     <form method="POST">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <button type="submit">Login</button>
-        <a href="{% url 'register' %}">Create account</a>
+        {{ form.as_p }}
+        <button type="submit">Register</button>
     </form>
+
+    <a href="{% url 'login' %}">Already have an account? Login</a>
 </div>
 
 </body>

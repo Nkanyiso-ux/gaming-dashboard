@@ -5,6 +5,7 @@ from .forms import GamingSessionForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 
 @login_required
 def dashboard_view(request):
@@ -100,3 +101,17 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+            login(request,user)# auto login after register
+            return redirect("dashboard")
+    else:
+        form = UserCreationForm()
+        
+    return render(request, "dashboard/register.html", {"form": form})
