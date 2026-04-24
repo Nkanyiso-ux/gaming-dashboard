@@ -214,31 +214,28 @@ td {
         flex-direction: column;
     }
 
-    .main {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .cards {
-        grid-template-columns: 1fr;
-    }
-
-    canvas {
-        height: 250px !important;
-    }
-
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .btn {
-        width: 100%;
+    .sidebar {
         position: relative;
-        z-index: 10;
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    .sidebar a {
+        padding: 8px;
+        font-size: 12px;
+        flex: 1;
+        text-align: center;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 10px;
     }
 }
+
 </style>
 </head>
 
