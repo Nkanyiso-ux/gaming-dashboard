@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class GamingSession(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null = True)
     
     date = models.DateField()
     game_name = models.CharField(max_length=100)

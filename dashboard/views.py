@@ -1,15 +1,18 @@
-
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import GamingSession
 from .forms import GamingSessionForm
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
+
+# =========================
+# DASHBOARD
+# =========================
 @login_required
 def dashboard_view(request):
-    sessions = GamingSession.objects.all().order_by('-date')
+    # ✅ Only logged-in user's data
+    sessions = GamingSession.objects.filter(user=request.user).order_by('-date')
 
     # ✅ FILTER LOGIC
     start_date = request.GET.get('start')
@@ -18,22 +21,27 @@ def dashboard_view(request):
     if start_date and end_date:
         sessions = sessions.filter(date__range=[start_date, end_date])
 
+    # ✅ STATS
     total_sessions = sessions.count()
     total_profit = sum(s.profit or 0 for s in sessions)
-    biggest_win = max([s.best_win for s in sessions], default=0)
+    biggest_win = max([s.profit or 0 for s in sessions], default=0)
 
     wins = sum(1 for s in sessions if (s.profit or 0) > 0)
     losses = sum(1 for s in sessions if (s.profit or 0) <= 0)
     win_rate = (wins / total_sessions * 100) if total_sessions > 0 else 0
 
+    # ✅ CHART DATA
     dates = [s.date.strftime("%Y-%m-%d") for s in sessions]
     profits = [s.profit or 0 for s in sessions]
     games = [s.game_name for s in sessions]
 
+    # ✅ ADD SESSION
     if request.method == "POST":
         form = GamingSessionForm(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user = request.user  # 🔥 link to user
+            obj.save()
             return redirect('dashboard')
     else:
         form = GamingSessionForm()
@@ -44,29 +52,36 @@ def dashboard_view(request):
         'total_sessions': total_sessions,
         'total_profit': total_profit,
         'biggest_win': biggest_win,
-        'win_rate': round(win_rate),
+        'win_rate': round(win_rate, 2),
         'dates': dates,
         'profits': profits,
         'games': games,
         'losses': losses,
         'wins': wins,
     })
- 
 
 
+# =========================
+# DELETE SESSION (SECURE)
+# =========================
+@login_required
 def delete_session(request, id):
     if request.method == 'POST':
-        session = get_object_or_404(GamingSession, id=id)
+        session = get_object_or_404(GamingSession, id=id, user=request.user)
         session.delete()
- 
     return redirect('dashboard')
 
+
+# =========================
+# OVERVIEW
+# =========================
+@login_required
 def overview(request):
-    sessions = GamingSession.objects.all()
+    sessions = GamingSession.objects.filter(user=request.user)
 
     total_sessions = sessions.count()
     total_profit = sum(s.profit or 0 for s in sessions)
-    biggest_win = max([s.best_win for s in sessions], default=0)
+    biggest_win = max([s.profit or 0 for s in sessions], default=0)
 
     wins = sum(1 for s in sessions if (s.profit or 0) > 0)
     win_rate = (wins / total_sessions * 100) if total_sessions > 0 else 0
@@ -83,6 +98,10 @@ def overview(request):
         'profits': profits,
     })
 
+
+# =========================
+# LOGIN
+# =========================
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -91,27 +110,56 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request,user)
+            login(request, user)
             return redirect("dashboard")
         else:
-            return render(request, "dashboard/login.html", {"error": "invalid credentials"})
+            return render(request, "dashboard/login.html", {
+                "error": "Invalid username or password"
+            })
+
     return render(request, "dashboard/login.html")
 
+
+# =========================
+# LOGOUT
+# =========================
 def logout_view(request):
     logout(request)
     return redirect("login")
 
+
+# =========================
+# REGISTER
+# =========================
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
 
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.user = request.user
-            obj.save()
-            login(request,user)# auto login after register
+            user = form.save()
+            login(request, user)  # auto login
             return redirect("dashboard")
     else:
         form = UserCreationForm()
-        
+
     return render(request, "dashboard/register.html", {"form": form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
