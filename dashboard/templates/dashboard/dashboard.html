@@ -13,89 +13,60 @@
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #f5f7fb;
+    background: #ecedef;
     display: flex;
 }
 
-/* SIDEBAR */
+/* PROFILE CIRCLE */
+.profile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
 
-/* Sidebar - hidden by default */
+/* SIDEBAR */
 .sidebar {
-    width: 0;
+    width: 240px;
     background: #0e1b36;
     color: white;
-    height: 100%;
+    height: 100vh;
     padding: 15px;
     position: fixed;
-    top: 0;
-    left: 0;
-    overflow-x: hidden;
-    transition: width 0.3s ease;
-    padding-top: 60px;
-    z-index: 1000;
-    box-shadow:0.2s;
 }
-/* When sidebar is open */
-.sidebar.active{
-    width: 250px
+
+.sidebar h2 {
+    margin-bottom: 40px;
 }
 
 .sidebar a {
     display: block;
-    padding: 12px 20px;
-    margin: 5px 0;
+    padding: 12px;
+    margin: 10px 0;
     color: #cbd5f5;
     text-decoration: none;
     border-radius: 8px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: 0.5s;
-} 
-.sidebar a:hover{
+}
+
+.sidebar a:hover,
+.sidebar a.active {
     background: #4f46e5;
     color: white;
 }
-/* Menu button */
-.menu-button {
-    font-size: 20px;
-    padding: 10px 15px;
-    cursor:pointer;
-    background: #5851d8;
-    color: white;
-    border: none; 
-    border-radius: 8px;
-}
-/* Close button inside sidebar */
-.close-btn {
-    position: absolute;
-    top:20px;
-    right: 20px;
-    font-size: 20px;
-    background: #ad2929;
-    border: none;
-    color: #E2E8F0;
-    cursor: pointer; 
 
-}
-/*dark overlay when sidebar open */
-.overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 999;
-}
-.overlay.active{
-    display:block;
-}
 /* MAIN */
 .main {
-    width: 100%;
+    margin-left: 260px;
     padding: 20px;
+    width: 100%;
 }
+
 /* HEADER */
 .header {
     display: flex;
@@ -107,8 +78,8 @@ body {
 .btn {
     background: linear-gradient(135deg, #4f46e5, #6366f1);
     color: white;
-    padding: 15px 10px;
-    border-radius: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
 }
@@ -118,20 +89,25 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
     gap: 20px;
-  
 }
 
 .card {
-   
-    padding: 10px;
+    padding: 20px;
     border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(17, 31, 236, 0.59);
+    box-shadow: 0 4px 10px rgba(24, 20, 143, 0.99);
+
+
+    display: flex;
+    flex-direction: column;     /* stack text (title + value) */
+    justify-content: center;    /* vertical center */
+    align-items: center;        /* horizontal center */
+    text-align: center;         /* center text */
 }
+
 /* COLORS */
 .card:nth-child(1){
     background: #E3F2FD;
     border-left: 5px solid #2196F3;
-   
 }
 .card:nth-child(2) {
     background: #FFFFFF;
@@ -150,7 +126,6 @@ body {
 .red { color: #B71C1C; font-weight: 700; }
 
 
-
 /* CHARTS */
 .chart-box {
     background: white;
@@ -163,7 +138,6 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
     gap: 20px;
-    background: #803a5b02;
 }
 
 /* TABLE */
@@ -181,8 +155,8 @@ table {
 }
 
 th {
-    background: #0e27b330;
-    padding: 20px;
+    background: #f1f5f9;
+    padding: 10px;
 }
 
 td {
@@ -206,6 +180,32 @@ td {
     padding: 20px;
     border-radius: 12px;
 }
+.edit-btn {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-right: 5px;
+    font-size: 13px;
+}
+
+.edit-btn:hover {
+    background: #2563eb;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -219,57 +219,81 @@ td {
         width: 100%;
         height: auto;
         display: flex;
-        justify-content: space-between;
-        padding: 10px;
+        justify-content: space-around;
     }
 
-    .sidebar a {
-        padding: 8px;
-        font-size: 12px;
-        flex: 1;
-        text-align: center;
+    .sidebar h2 {
+        display: none;
     }
 
     .main {
         margin-left: 0;
-        padding: 10px;
+        padding: 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    canvas {
+        height: 250px !important;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
     }
 }
-
 </style>
 </head>
 
 <body>
 
 <!-- SIDEBAR -->
-<!--button to open sidebar-->
+<div class="sidebar">
+ <!-- PROFILE CIRCLE -->
+    <div class="profile">
+        {{ request.user.username|first|upper }}
+    </div>
+    
 
+<!-- USER NAME -->
+    <span style="font-weight:600;">
+      {{ request.user.username }}
+    </span>
 
-<!--The sidebar-->
-<div id="sidebar" class="sidebar">
-    <button id="close-btn" class="close-btn">x</button>
-    <h2>🎮 Dashboard</h2>
-    <a href="{% url 'overview' %}" class="{% if request.path == '/' %}active{% endif %}">
+    <a href="{% url 'overview' %}" class="{% if request.path == '/overview/' %}{% endif %}">
         📊 Overview
     </a>
 
-    <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}active{% endif %}">
+    <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}{% endif %}">
         📋 Sessions
     </a>
+
+    <a href="{% url 'export_excel' %}" class="{% if request.path == '/export/' %}{% endif %}">
+    📥 Export to Excel
+    </a>
+
+
+    <a href="{% url 'logout' %}" 
+           style="background:#ef4444;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">
+           Logout
+        </a>
+   
 </div>
-<!--Overlay-->
-<div id="overlay" class="overlay"></div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="header">
-    <button id="menu-btn" class="menu-button">=MENU</button>
     <h1>Gaming Analytics</h1>
     <button class="btn" onclick="openModal()">➕ Add Session</button>
-    <a href="{% url 'logout' %}" class="btn" style= "background":#ef4444;>
-        logout
-    </a>
+   
 </div>
 
 <!-- CARDS -->
@@ -321,10 +345,14 @@ td {
 <!-- TABLE -->
 <div class="table-box">
 <table>
-<tr><th>Date</th><th>Game</th><th>Profit</th></tr>
+<tr>
+    <th>Date</th>
+    <th>Game</th>
+    <th>Profit</th>
+    <th>Actions</th>
+</tr>
 
 {% for session in sessions %}
-
 <tr>
     <td>{{ session.date }}</td>
     <td>{{ session.game_name }}</td>
@@ -334,27 +362,21 @@ td {
     </td>
 
     <td>
-        <!-- EDIT BUTTON -->
-        <button class="btn" 
-            onclick="editSession('{{ session.id }}','{{ session.date }}','{{ session.game_name }}','{{ session.profit }}')">
-            ✏️
-        </button>
+        <!-- EDIT -->
+        <a href="{% url 'edit_session' session.id %}" class="edit-btn">
+            ✏️ Edit
+        </a>
 
-        <!-- DELETE BUTTON -->
-        <form method="POST" action="{% url 'delete_session' session.id %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" style="border:none;background:none;color:red;cursor:pointer;">
-                🗑️
-            </button>
-        </form>
+        <!-- DELETE -->
+        <a href="{% url 'delete_session' session.id %}" 
+           class="delete-btn"
+           onclick="return confirm('Are you sure you want to delete this session?')">
+            🗑 Delete
+        </a>
     </td>
 </tr>
-
 {% endfor %}
-
 </table>
-</div>
-
 </div>
 
 <!-- MODAL -->
@@ -374,26 +396,6 @@ td {
 
 <!-- JS -->
 <script>
-<!--SIDEBAR-->
-const sidebar = document.getElementById("sidebar");
-const menuBtn = document.getElementById('menu-btn');
-const closeBtn = document.getElementById('close-btn');
-const overlay = document.getElementById('overlay');
-menuBtn.onclick = () => {
-    sidebar.classList.add("active");
-    overlay.classList.add("active");
-}
-
-closeBtn.onclick = () => {
-    sidebar.classList.remove("active");
-    overlay.classList.remove("active");
-}
-
-overlay.onclick = () => {
-    sidebar.classList.remove("active");
-    overlay.classList.remove("active");
-}
-
 // CHARTS
 const ctx = document.getElementById('chart').getContext('2d');
 const gradient = ctx.createLinearGradient(0,0,0,300);
@@ -405,13 +407,24 @@ type:'line',
 data:{
 labels: {{ dates|safe }},
 datasets:[{
-data: {{ profits|safe }},
-borderColor:"#4f46e5",
-backgroundColor:gradient,
-fill:true,
-tension:0.4
-}]
+    label: 'Profit Trend',
+    data: {{ profits|safe }},
+    borderColor:"#4f46e5",
+    backgroundColor:gradient,
+    fill:true,
+    tension:0.4
+}],
+},
+options: {
+    scales: {
+        x: {
+            ticks: {
+                maxTicksLimit: 5
+            }
+        }
+    }
 }
+
 });
 
 new Chart(document.getElementById('pieChart'),{
@@ -430,6 +443,7 @@ type:'bar',
 data:{
 labels: {{ games|default:"[]"|safe }},
 datasets:[{
+label: 'profit per game',
 data: {{ profits|default:"[]"|safe }},
 backgroundColor:"#4f46e5"
 }]
@@ -437,23 +451,8 @@ backgroundColor:"#4f46e5"
 });
 
 // MODAL
-
-
 function openModal() {
     document.getElementById("modal").style.display = "block";
-    document.getElementById("sessionForm").reset();
-    document.getElementById("session_id").value = "";
-}
-
-function editSession(id, date, game, profit) {
-    openModal();
-
-    document.getElementById("session_id").value = id;
-
-    // These names MUST match your form fields
-    document.getElementById("id_date").value = date;
-    document.getElementById("id_game_name").value = game;
-    document.getElementById("id_profit").value = profit;
 }
 
 function closeModal() {
@@ -469,3 +468,7 @@ window.onclick = function(e) {
 
 </body>
 </html>
+
+
+
+

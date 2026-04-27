@@ -7,5 +7,7 @@ urlpatterns = [
     path('overview', views.overview,name='overview'),
     path('sessions/', views.dashboard_view,name='dashboard'),#defalt page
     path('delete/<int:id>/', views.delete_session,name='delete_session'),
+    path('edit/<int:id>/', views.edit_session, name='edit_session'),
     path('logout/', views.logout_view,name='logout'),
+    path('export/', views.export_excel, name='export_excel'),
 ]

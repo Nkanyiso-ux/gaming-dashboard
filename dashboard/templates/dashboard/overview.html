@@ -17,6 +17,21 @@ body {
     display: flex;
 }
 
+/* PROFILE CIRCLE */
+.profile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    
+}
+
 /* SIDEBAR */
 .sidebar {
     width: 240px;
@@ -28,13 +43,13 @@ body {
 }
 
 .sidebar h2 {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }
 
 .sidebar a {
     display: block;
-    padding: 20px;
-    margin: 15px 0;
+    padding: 12px;
+    margin: 10px 0;
     color: #cbd5f5;
     text-decoration: none;
     border-radius: 8px;
@@ -45,6 +60,7 @@ body {
     background: #4f46e5;
     color: white;
 }
+
 
 /* MAIN CONTENT */
 .main {
@@ -64,6 +80,13 @@ body {
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 4px 10px rgba(24, 20, 143, 0.99);
+
+
+    display: flex;
+    flex-direction: column;     /* stack text (title + value) */
+    justify-content: center;    /* vertical center */
+    align-items: center;        /* horizontal center */
+    text-align: center;         /* center text */
 }
 
 /* COLORS */
@@ -94,6 +117,8 @@ body {
     margin-top: 15px;
     border-radius: 12px;
 }
+
+
 /* MOBILE */
 @media(max-width:768px){
 
@@ -134,7 +159,18 @@ body {
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>🎮 Dashboard</h2>
+    
+    <!-- PROFILE CIRCLE -->
+    <div class="profile">
+        {{ request.user.username|first|upper }}
+    </div>
+    
+    
+    <!-- USER NAME -->
+    <span style="font-weight:600;">
+        {{ request.user.username }}
+    </span>
+    
 
     <a href="{% url 'overview' %}" class="{% if request.path == '/' %}active{% endif %}">
         📊 Overview
@@ -143,13 +179,23 @@ body {
     <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}active{% endif %}">
         📋 Sessions
     </a>
+
+    <a href="{% url 'export_excel' %}" class="{% if request.path == '/export/' %}active{% endif %}">
+    📥 Export to Excel
+    </a>
+
+    <a href="{% url 'logout' %}" 
+        style="background:#ef4444;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">
+        Logout
+        </a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
+<div class="dashboard-header">
     <h1>📊 Overview Dashboard</h1>
-
+      
     <!-- CARDS -->
     <div class="cards">
         <div class="card">Sessions: {{ total_sessions }}</div>
