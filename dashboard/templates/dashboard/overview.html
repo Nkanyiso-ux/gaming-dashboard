@@ -161,18 +161,22 @@ body {
 <div class="sidebar">
     
     <!-- PROFILE CIRCLE -->
+    <h1>
     <div class="profile">
         {{ request.user.username|first|upper }}
     </div>
+    </h1>
     
     
     <!-- USER NAME -->
+     <h1>
     <span style="font-weight:600;">
         {{ request.user.username }}
     </span>
+    </h1>
     
 
-    <a href="{% url 'overview' %}" class="{% if request.path == '/' %}active{% endif %}">
+    <a href="{% url 'overview' %}" class="{% if request.path == '/overview/' %}active{% endif %}">
         📊 Overview
     </a>
 
@@ -184,10 +188,9 @@ body {
     📥 Export to Excel
     </a>
 
-    <a href="{% url 'logout' %}" 
-        style="background:#ef4444;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">
-        Logout
-        </a>
+    <a href="{% url 'logout' %}" class="{% if request.path == '/logout/' %}active{% endif %}"> 
+        ➡️Logout
+    </a>
 </div>
 
 <!-- MAIN -->

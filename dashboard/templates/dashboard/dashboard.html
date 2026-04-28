@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -257,34 +258,30 @@ td {
 <!-- SIDEBAR -->
 <div class="sidebar">
  <!-- PROFILE CIRCLE -->
+    <h1>
     <div class="profile">
         {{ request.user.username|first|upper }}
     </div>
+    </h1>
     
 
 <!-- USER NAME -->
+    <h1>
     <span style="font-weight:600;">
       {{ request.user.username }}
     </span>
+    </h1>
 
-    <a href="{% url 'overview' %}" class="{% if request.path == '/overview/' %}{% endif %}">
+    <a href="{% url 'overview' %}" class="{% if request.path == '/overview/' %}active{% endif %}">
         📊 Overview
     </a>
 
-    <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}{% endif %}">
+    <a href="{% url 'dashboard' %}" class="{% if request.path == '/sessions/' %}active{% endif %}">
         📋 Sessions
     </a>
 
-    <a href="{% url 'export_excel' %}" class="{% if request.path == '/export/' %}{% endif %}">
-    📥 Export to Excel
-    </a>
-
-
-    <a href="{% url 'logout' %}" 
-           style="background:#ef4444;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">
-           Logout
-        </a>
-   
+    <a href="{% url 'export_excel' %}">📥 Export to Excel</a>
+    <a href="{% url 'logout' %}">➡️ Logout</a>
 </div>
 
 <!-- MAIN -->
@@ -292,8 +289,7 @@ td {
 
 <div class="header">
     <h1>Gaming Analytics</h1>
-    <button class="btn" onclick="openModal()">➕ Add Session</button>
-   
+    <a href="{% url 'add_session' %} " class="btn" style="background: #253be3">+ Add Session</a>
 </div>
 
 <!-- CARDS -->
@@ -380,75 +376,62 @@ td {
 </div>
 
 <!-- MODAL -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <h3>
-            Add Session 
-            <span onclick="closeModal()" style="float:right;cursor:pointer;">❌</span>
-        </h3>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn" type="submit">Save</button>
-        </form>
-    </div>
-</div>
+
+<!-- SAFE JSON DATA -->
+{{ dates|json_script:"dates-data" }}
+{{ profits|json_script:"profits-data" }}
+{{ games|json_script:"games-data" }}
 
 <!-- JS -->
 <script>
-// CHARTS
+const dates = JSON.parse(document.getElementById('dates-data').textContent);
+const profits = JSON.parse(document.getElementById('profits-data').textContent);
+const games = JSON.parse(document.getElementById('games-data').textContent);
+   
+// LINE CHART
 const ctx = document.getElementById('chart').getContext('2d');
 const gradient = ctx.createLinearGradient(0,0,0,300);
 gradient.addColorStop(0,"rgba(79,70,229,0.4)");
 gradient.addColorStop(1,"rgba(79,70,229,0)");
-
+ 
 new Chart(ctx,{
-type:'line',
-data:{
-labels: {{ dates|safe }},
-datasets:[{
-    label: 'Profit Trend',
-    data: {{ profits|safe }},
-    borderColor:"#4f46e5",
-    backgroundColor:gradient,
-    fill:true,
-    tension:0.4
-}],
-},
-options: {
-    scales: {
-        x: {
-            ticks: {
-                maxTicksLimit: 5
-            }
-        }
+    type:'line',
+    data:{
+        labels: dates,
+        datasets:[{
+            data: profits,
+            borderColor:"#4f46e5",
+            backgroundColor:gradient,
+            fill:true,
+            tension:0.4
+        }]
     }
-}
-
 });
 
+// PIE
 new Chart(document.getElementById('pieChart'),{
-type:'pie',
-data:{
-labels:['Wins','Losses'],
-datasets:[{
-data:[{{ wins|default:0 }},{{ losses|default:0 }}],
-backgroundColor:['#16a34a','#dc2626']
-}]
-}
+    type:'pie',
+    data:{
+        labels:['Wins','Losses'],
+        datasets:[{
+            data:[{{ wins|default:0 }},{{ losses|default:0 }}],
+            backgroundColor:['#16a34a','#dc2626']
+        }]
+    }
 });
 
+// BAR
 new Chart(document.getElementById('barChart'),{
-type:'bar',
-data:{
-labels: {{ games|default:"[]"|safe }},
-datasets:[{
-label: 'profit per game',
-data: {{ profits|default:"[]"|safe }},
-backgroundColor:"#4f46e5"
-}]
-}
+    type:'bar',
+    data:{
+        labels: games,
+        datasets:[{
+            data: profits,
+            backgroundColor:"#4f46e5"
+        }]
+    }
 });
+
 
 // MODAL
 function openModal() {
@@ -460,7 +443,7 @@ function closeModal() {
 }
 
 window.onclick = function(e) {
-    if (e.target.id === "modal") {
+    if(e.target.id === "modal") {
         closeModal();
     }
 }
@@ -468,7 +451,4 @@ window.onclick = function(e) {
 
 </body>
 </html>
-
-
-
 

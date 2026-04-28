@@ -26,20 +26,16 @@ def dashboard_view(request):
     games = [s.game_name for s in sessions]
 
     if request.method == "POST":
-        session_id = request.POST.get("session_id")
-
-        if session_id:
-            session = get_object_or_404(GamingSession, id=session_id, user=request.user)
-            form = GamingSessionForm(request.POST, instance=session)
-        else:
-            form = GamingSessionForm(request.POST)
+        form = GamingSessionForm(request.POST)
 
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
-            messages.success(request, "Saved successfully!")
             return redirect('dashboard')
+        else:
+            print("FORM ERRORS:", form.errors)  # DEBUG
+
     else:
         form = GamingSessionForm()
 
@@ -56,8 +52,6 @@ def dashboard_view(request):
         'wins': wins,
         'losses': losses,
     })
-
-
 
 @login_required
 def overview(request):
@@ -112,13 +106,16 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
+@login_required
 def edit_session(request, id):
-    session = GamingSession.objects.get(id=id)
+    session = get_object_or_404(GamingSession, id=id, user=request.user)
 
     form = GamingSessionForm(request.POST or None, instance=session)
 
     if form.is_valid():
-        form.save()
+        obj = form.save(commit=False)
+        obj.user = request.user
+        obj.save()
         return redirect('dashboard')
 
     return render(request, 'dashboard/editSession.html', {'form': form})
@@ -135,10 +132,23 @@ def register_view(request):
 
     return render(request, "dashboard/register.html", {"form": form})
 
+@login_required
+def add_session(request):
+    if request.method == "POST":
+        form = GamingSessionForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+            return redirect('dashboard')
+    else:
+        form = GamingSessionForm()
 
+    return render(request, 'dashboard/add_session.html', {'form': form})
+
+@login_required
 def export_excel(request):
-    sessions = GamingSession.objects.all()
-
+    sessions = GamingSession.objects.filter(user=request.user)
     # Create workbook
     wb = openpyxl.Workbook()
     ws = wb.active
