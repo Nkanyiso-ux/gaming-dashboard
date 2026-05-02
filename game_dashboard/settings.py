@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-2#(tp+yhg$_#sgg&)h&nc*-6v_g@crv+1(6keio#-@rgk#cebs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['nkanyiso-game-tracker.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
